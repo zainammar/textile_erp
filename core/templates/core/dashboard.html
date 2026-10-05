@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Textile ERP{% endblock %}
+{% block page_heading %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="card-grid">
+    <div class="card">
+        <h3>Sales Today</h3>
+        <div class="value">{{ sales_summary.today }}</div>
+    </div>
+    <div class="card">
+        <h3>Sales This Month</h3>
+        <div class="value">{{ sales_summary.this_month }}</div>
+    </div>
+    <div class="card">
+        <h3>Purchase This Month</h3>
+        <div class="value">{{ purchase_summary.this_month }}</div>
+    </div>
+    <div class="card">
+        <h3>Total Stock Items</h3>
+        <div class="value">{{ stock_summary.total_items }}</div>
+    </div>
+    <div class="card">
+        <h3>Low Stock Alerts</h3>
+        <div class="value">{{ stock_summary.low_stock }}</div>
+    </div>
+    <div class="card">
+        <h3>Profit This Month</h3>
+        <div class="value">{{ profit_report.this_month }}</div>
+    </div>
+</div>
+
+<div class="panel">
+    <h3 style="margin-top:0;">Recent Orders</h3>
+    {% if recent_orders %}
+    <table class="data-table">
+        <thead>
+            <tr><th>Order #</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+        {% for order in recent_orders %}
+            <tr>
+                <td>{{ order.number }}</td>
+                <td>{{ order.customer }}</td>
+                <td>{{ order.date }}</td>
+                <td>{{ order.amount }}</td>
+                <td>{{ order.status }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color:var(--color-muted);">Abhi koi orders nahi hain. Sales module bann jaye to yahan recent orders dikhenge.</p>
+    {% endif %}
+</div>
+{% endblock %}

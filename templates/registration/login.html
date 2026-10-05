@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Login - Textile ERP{% endblock %}
+{% block guest_content %}
+<div class="login-card">
+    <h1>Textile ERP Login</h1>
+    {% if form.errors %}
+        <div class="alert alert-error">Username ya password ghalat he.</div>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="id_username">Username</label>
+            {{ form.username }}
+        </div>
+        <div>
+            <label for="id_password">Password</label>
+            {{ form.password }}
+        </div>
+        <button type="submit">Login</button>
+    </form>
+</div>
+{% endblock %}

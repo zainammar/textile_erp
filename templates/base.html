@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Textile ERP{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+{% if user.is_authenticated %}
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="sidebar-brand">Textile ERP</div>
+        <nav class="sidebar-nav">
+            <a href="{% url 'core:dashboard' %}" class="nav-link">Dashboard</a>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Customers</span>
+                <a href="{% url 'customers:add_customer' %}" class="nav-link">Add Customer</a>
+                <a href="{% url 'customers:ledger' %}" class="nav-link">Customer Ledger</a>
+                <a href="{% url 'customers:payment_history' %}" class="nav-link">Payment History</a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Suppliers</span>
+                <a href="{% url 'suppliers:add_supplier' %}" class="nav-link">Add Supplier</a>
+                <a href="{% url 'suppliers:purchase_history' %}" class="nav-link">Purchase History</a>
+                <a href="{% url 'suppliers:ledger' %}" class="nav-link">Supplier Ledger</a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Products</span>
+                <a href="{% url 'products:fabric_category' %}" class="nav-link">Fabric Category</a>
+                <a href="{% url 'products:fabric_quality' %}" class="nav-link">Fabric Quality</a>
+                <a href="{% url 'products:color' %}" class="nav-link">Color</a>
+                <a href="{% url 'products:design' %}" class="nav-link">Design</a>
+                <a href="{% url 'products:gsm' %}" class="nav-link">GSM</a>
+                <a href="{% url 'products:width' %}" class="nav-link">Width</a>
+                <a href="{% url 'products:unit' %}" class="nav-link">Unit</a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Inventory</span>
+                <a href="{% url 'inventory:stock_in' %}" class="nav-link">Stock In</a>
+                <a href="{% url 'inventory:stock_out' %}" class="nav-link">Stock Out</a>
+                <a href="{% url 'inventory:stock_adjustment' %}" class="nav-link">Stock Adjustment</a>
+                <a href="{% url 'inventory:warehouse' %}" class="nav-link">Warehouse Management</a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Purchase</span>
+                <a href="{% url 'purchase:orders' %}" class="nav-link">Purchase Orders</a>
+                <a href="{% url 'purchase:receive_goods' %}" class="nav-link">Receive Goods</a>
+                <a href="{% url 'purchase:invoice' %}" class="nav-link">Purchase Invoice</a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Sales</span>
+                <a href="{% url 'sales:order' %}" class="nav-link">Sales Order</a>
+                <a href="{% url 'sales:invoice' %}" class="nav-link">Sales Invoice</a>
+                <a href="{% url 'sales:delivery_challan' %}" class="nav-link">Delivery Challan</a>
+                <a href="{% url 'sales:return_management' %}" class="nav-link">Return Management</a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Accounts</span>
+                <a href="{% url 'accounts:income' %}" class="nav-link">Income</a>
+                <a href="{% url 'accounts:expense' %}" class="nav-link">Expense</a>
+                <a href="{% url 'accounts:cash_book' %}" class="nav-link">Cash Book</a>
+                <a href="{% url 'accounts:bank_book' %}" class="nav-link">Bank Book</a>
+                <a href="{% url 'accounts:customer_ledger' %}" class="nav-link">Customer Ledger</a>
+                <a href="{% url 'accounts:supplier_ledger' %}" class="nav-link">Supplier Ledger</a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Reports</span>
+                <a href="{% url 'reports_app:sales_report' %}" class="nav-link">Sales Report</a>
+                <a href="{% url 'reports_app:purchase_report' %}" class="nav-link">Purchase Report</a>
+                <a href="{% url 'reports_app:stock_report' %}" class="nav-link">Stock Report</a>
+                <a href="{% url 'reports_app:profit_loss' %}" class="nav-link">Profit & Loss</a>
+                <a href="{% url 'reports_app:customer_report' %}" class="nav-link">Customer Report</a>
+                <a href="{% url 'reports_app:supplier_report' %}" class="nav-link">Supplier Report</a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Users</span>
+                <a href="{% url 'users_app:roles_permissions' %}" class="nav-link">Roles & Permissions</a>
+                <a href="{% url 'users_app:staff_management' %}" class="nav-link">Staff Management</a>
+            </div>
+
+            <div class="nav-group">
+                <span class="nav-group-title">Settings</span>
+                <a href="{% url 'company_settings:company_info' %}" class="nav-link">Company Information</a>
+                <a href="{% url 'company_settings:invoice_settings' %}" class="nav-link">Invoice Settings</a>
+                <a href="{% url 'company_settings:tax' %}" class="nav-link">Tax</a>
+                <a href="{% url 'company_settings:currency' %}" class="nav-link">Currency</a>
+            </div>
+        </nav>
+    </aside>
+
+    <header class="topbar">
+        <div class="topbar-title">{% block page_heading %}Dashboard{% endblock %}</div>
+        <div class="topbar-user">
+            <span>{{ user.username }}</span>
+            <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+        </div>
+    </header>
+
+    <main class="content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+</div>
+{% else %}
+<main class="content-plain">
+    {% block guest_content %}{% endblock %}
+</main>
+{% endif %}
+
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

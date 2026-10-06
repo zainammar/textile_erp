@@ -22,4 +22,5 @@ urlpatterns = [
     path('reports/', include('reports_app.urls')),
     path('users/', include('users_app.urls')),
     path('settings/', include('company_settings.urls')),
+    path('production/', include('production.urls')),
 ]

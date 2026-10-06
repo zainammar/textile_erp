@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .po-toolbar { display:grid; grid-template-columns: 1fr auto; gap:12px; margin-bottom:14px; align-items:center; }
+  .po-table { width:100%; border-collapse:collapse; }
+  .po-table th, .po-table td { padding:9px 12px; border-bottom:1px solid #e1e5ea; text-align:left; font-size:.92rem; }
+  .po-table th { background:#eef2f5; }
+</style>
+<h2>Production Orders</h2>
+<div class="po-toolbar">
+  <form method="get">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All status</option>
+      {% for val, label in statuses %}<option value="{{ val }}" {% if val == current %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+  </form>
+  <a href="{% url 'production:add' %}">+ New Order</a>
+</div>
+<table class="po-table">
+  <tr><th>Order #</th><th>Fabric</th><th>Quality</th><th>Color</th><th>Qty</th><th>Due</th><th>Status</th><th></th></tr>
+  {% for o in object_list %}
+  <tr>
+    <td>{{ o.order_no }}</td><td>{{ o.fabric_category }}</td><td>{{ o.quality }}</td><td>{{ o.color }}</td>
+    <td>{{ o.quantity }} {{ o.get_unit_display }}</td><td>{{ o.due_date }}</td><td>{{ o.get_status_display }}</td>
+    <td><a href="{% url 'production:edit' o.pk %}">Edit</a> | <a href="{% url 'production:delete' o.pk %}">Delete</a></td>
+  </tr>
+  {% empty %}<tr><td colspan="8">Koi order nahi</td></tr>{% endfor %}
+</table>
+{% if is_paginated %}
+<p>
+  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&status={{ current }}">&laquo; Prev</a>{% endif %}
+  Page {{ page_obj.number }} / {{ paginator.num_pages }}
+  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&status={{ current }}">Next &raquo;</a>{% endif %}
+</p>
+{% endif %}
+{% endblock %}

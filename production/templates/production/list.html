@@ -17,14 +17,14 @@
   <a href="{% url 'production:add' %}">+ New Order</a>
 </div>
 <table class="po-table">
-  <tr><th>Order #</th><th>Fabric</th><th>Quality</th><th>Color</th><th>Qty</th><th>Due</th><th>Status</th><th></th></tr>
+  <tr><th>Order #</th><th>Buyer</th><th>Fabric</th><th>Qty</th><th>Due</th><th>Status</th><th></th></tr>
   {% for o in object_list %}
   <tr>
-    <td>{{ o.order_no }}</td><td>{{ o.fabric_category }}</td><td>{{ o.quality }}</td><td>{{ o.color }}</td>
-    <td>{{ o.quantity }} {{ o.get_unit_display }}</td><td>{{ o.due_date }}</td><td>{{ o.get_status_display }}</td>
+    <td>{{ o.order_no }}</td><td>{{ o.buyer }}</td><td>{{ o.fabric|default:"-" }}</td>
+    <td>{{ o.quantity }} {{ o.fabric.unit }}</td><td>{{ o.due_date }}</td><td>{{ o.get_status_display }}</td>
     <td><a href="{% url 'production:edit' o.pk %}">Edit</a> | <a href="{% url 'production:delete' o.pk %}">Delete</a></td>
   </tr>
-  {% empty %}<tr><td colspan="8">Koi order nahi</td></tr>{% endfor %}
+  {% empty %}<tr><td colspan="7">Koi order nahi</td></tr>{% endfor %}
 </table>
 {% if is_paginated %}
 <p>

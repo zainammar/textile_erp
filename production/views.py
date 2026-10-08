@@ -2,8 +2,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import ProductionOrder
 
-FIELDS = ["fabric_category", "quality", "color", "design", "gsm", "width",
-          "quantity", "unit", "start_date", "due_date", "status", "notes"]
+FIELDS = ["buyer", "fabric", "quantity", "start_date", "due_date", "status", "notes"]
 
 
 class OrderList(ListView):
@@ -12,7 +11,7 @@ class OrderList(ListView):
     template_name = "production/list.html"
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = super().get_queryset().select_related("fabric__unit")
         status = self.request.GET.get("status")
         return qs.filter(status=status) if status else qs
 

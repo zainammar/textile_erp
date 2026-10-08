@@ -1,14 +1,19 @@
-from django.urls import path
-from . import views
+from .master_views import master_urls
+from .models import (FabricCategory, FabricQuality, Color, Design, Unit, Gsm, Width, Fabric)
 
-app_name = 'products'
+app_name = "products"
 
-urlpatterns = [
-    path('fabric-category/', views.fabric_category, name='fabric_category'),
-    path('fabric-quality/', views.fabric_quality, name='fabric_quality'),
-    path('color/', views.color, name='color'),
-    path('design/', views.design, name='design'),
-    path('gsm/', views.gsm, name='gsm'),
-    path('width/', views.width, name='width'),
-    path('unit/', views.unit, name='unit'),
-]
+NAMED = [("Name", "name"), ("Active", "is_active")]
+
+urlpatterns = (
+    master_urls(FabricCategory, "fabric_category", "fabric-category", "Fabric Category", NAMED, ["name", "is_active"])
+    + master_urls(FabricQuality, "fabric_quality", "fabric-quality", "Fabric Quality", NAMED, ["name", "is_active"])
+    + master_urls(Color, "color", "color", "Color", NAMED, ["name", "is_active"])
+    + master_urls(Design, "design", "design", "Design", NAMED, ["name", "is_active"])
+    + master_urls(Gsm, "gsm", "gsm", "GSM", [("GSM", "value")], ["value"])
+    + master_urls(Width, "width", "width", "Width", [("Width", "value")], ["value"])
+    + master_urls(Unit, "unit", "unit", "Unit", [("Name", "name"), ("Short", "short")], ["name", "short", "is_active"])
+    + master_urls(Fabric, "fabric", "fabric", "Fabrics",
+                  [("Fabric", "__str__"), ("Unit", "unit")],
+                  ["category", "quality", "color", "design", "gsm", "width", "unit"])
+)

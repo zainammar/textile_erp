@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .ms-table { width:100%; border-collapse:collapse; }
+  .ms-table th, .ms-table td { padding:9px 12px; border-bottom:1px solid #e1e5ea; text-align:left; font-size:.92rem; }
+  .ms-table th { background:#eef2f5; }
+  .ms-bar { display:grid; grid-template-columns: 1fr auto; gap:12px; margin-bottom:14px; align-items:center; }
+  .ms-err { color:#b91c1c; }
+</style>
+<h2>{{ title }}</h2>
+{% for m in messages %}<p class="ms-err">{{ m }}</p>{% endfor %}
+<div class="ms-bar">
+  <span></span>
+  <a href="{% url 'products:'|add:name|add:'_add' %}">+ Add</a>
+</div>
+<table class="ms-table">
+  <tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}<th></th></tr>
+  {% for obj, vals in rows %}
+  <tr>
+    {% for v in vals %}<td>{{ v }}</td>{% endfor %}
+    <td><a href="{% url 'products:'|add:name|add:'_edit' obj.pk %}">Edit</a> |
+        <a href="{% url 'products:'|add:name|add:'_delete' obj.pk %}">Delete</a></td>
+  </tr>
+  {% empty %}<tr><td colspan="{{ headers|length|add:1 }}">Abhi koi record nahi</td></tr>{% endfor %}
+</table>
+{% if is_paginated %}<p>
+  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">&laquo; Prev</a>{% endif %}
+  Page {{ page_obj.number }} / {{ paginator.num_pages }}
+  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>{% endif %}
+</p>{% endif %}
+{% endblock %}

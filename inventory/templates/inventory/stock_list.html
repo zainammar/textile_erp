@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .st-table { width:100%; border-collapse:collapse; }
+  .st-table th, .st-table td { padding:9px 12px; border-bottom:1px solid #e1e5ea; text-align:left; font-size:.92rem; }
+  .st-table th { background:#eef2f5; }
+</style>
+<h2>Stock</h2>
+<p><a href="{% url 'inventory:movement_list' %}">Stock movements dekhein &raquo;</a></p>
+<table class="st-table">
+  <tr><th>Fabric</th><th>Balance</th><th>Updated</th></tr>
+  {% for b in object_list %}
+  <tr><td>{{ b.fabric }}</td><td>{{ b.quantity }} {{ b.fabric.unit }}</td><td>{{ b.updated|date:"d M Y H:i" }}</td></tr>
+  {% empty %}<tr><td colspan="3">Abhi koi stock nahi</td></tr>{% endfor %}
+</table>
+{% if is_paginated %}<p>
+  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">&laquo; Prev</a>{% endif %}
+  Page {{ page_obj.number }} / {{ paginator.num_pages }}
+  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>{% endif %}
+</p>{% endif %}
+{% endblock %}

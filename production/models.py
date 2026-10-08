@@ -1,8 +1,8 @@
-from django.db import models
+from django.db import models, transaction
+from products.models import Fabric
 
 
 class ProductionOrder(models.Model):
-    """Self-contained: koi dusre app ka model import nahi karta."""
     PENDING, IN_PROGRESS, COMPLETED, CANCELLED = "pending", "in_progress", "completed", "cancelled"
     STATUS = [
         (PENDING, "Pending"),
@@ -10,22 +10,16 @@ class ProductionOrder(models.Model):
         (COMPLETED, "Completed"),
         (CANCELLED, "Cancelled"),
     ]
-    UNITS = [("m", "Meter"), ("yd", "Yard"), ("kg", "Kg"), ("thaan", "Thaan")]
 
-    # Fabric specs (baad mein products ke masters ki ForeignKey bana sakte hain)
-    fabric_category = models.CharField(max_length=80)
-    quality = models.CharField(max_length=80, blank=True)
-    color = models.CharField(max_length=60, blank=True)
-    design = models.CharField(max_length=80, blank=True)
-    gsm = models.PositiveIntegerField("GSM", null=True, blank=True)
-    width = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
-
+    buyer = models.CharField(max_length=120, default="")
+    # null=True sirf purane rows ke liye; form mein required hai
+    fabric = models.ForeignKey(Fabric, on_delete=models.PROTECT, null=True)
     quantity = models.DecimalField(max_digits=12, decimal_places=2)
-    unit = models.CharField(max_length=10, choices=UNITS, default="m")
     start_date = models.DateField()
     due_date = models.DateField()
     status = models.CharField(max_length=15, choices=STATUS, default=PENDING)
     notes = models.TextField(blank=True)
+    stock_added = models.BooleanField(default=False, editable=False)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -35,5 +29,31 @@ class ProductionOrder(models.Model):
     def order_no(self):
         return f"PO-{self.pk:04d}"
 
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        from inventory.services import stock_in, stock_out
+        super().save(*args, **kwargs)  # pehle pk chahiye (reference ke liye)
+        if not self.fabric_id:
+            return
+        if self.status == self.COMPLETED and not self.stock_added:
+            stock_in(self.fabric, self.quantity, "production", self.order_no)
+            self._flag(True)
+        elif self.status != self.COMPLETED and self.stock_added:
+            stock_out(self.fabric, self.quantity, "reversal", self.order_no,
+                      "Status Completed se hata", allow_negative=True)
+            self._flag(False)
+
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        from inventory.services import stock_out
+        if self.stock_added and self.fabric_id:
+            stock_out(self.fabric, self.quantity, "reversal", self.order_no,
+                      "Order delete hua", allow_negative=True)
+        return super().delete(*args, **kwargs)
+
+    def _flag(self, value):
+        self.stock_added = value
+        type(self).objects.filter(pk=self.pk).update(stock_added=value)
+
     def __str__(self):
-        return f"{self.order_no} - {self.fabric_category}"
+        return f"{self.order_no} - {self.fabric}"

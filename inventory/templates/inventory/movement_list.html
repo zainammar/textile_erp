@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .st-table { width:100%; border-collapse:collapse; }
+  .st-table th, .st-table td { padding:9px 12px; border-bottom:1px solid #e1e5ea; text-align:left; font-size:.92rem; }
+  .st-table th { background:#eef2f5; }
+</style>
+<h2>Stock Movements</h2>
+<p><a href="{% url 'inventory:stock_list' %}">&laquo; Stock balance</a> |
+   <a href="?">All</a> | <a href="?dir=in">In</a> | <a href="?dir=out">Out</a></p>
+<table class="st-table">
+  <tr><th>Date</th><th>Fabric</th><th>In/Out</th><th>Qty</th><th>Reason</th><th>Ref</th></tr>
+  {% for m in object_list %}
+  <tr><td>{{ m.created|date:"d M Y H:i" }}</td><td>{{ m.fabric }}</td><td>{{ m.get_direction_display }}</td>
+      <td>{{ m.quantity }}</td><td>{{ m.get_reason_display }}</td><td>{{ m.reference }}</td></tr>
+  {% empty %}<tr><td colspan="6">Koi movement nahi</td></tr>{% endfor %}
+</table>
+{% if is_paginated %}<p>
+  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">&laquo; Prev</a>{% endif %}
+  Page {{ page_obj.number }} / {{ paginator.num_pages }}
+  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>{% endif %}
+</p>{% endif %}
+{% endblock %}

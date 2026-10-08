@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .us-bar { display:grid; grid-template-columns: 1fr auto; gap:12px; margin-bottom:14px; align-items:center; }
+  .us-table { width:100%; border-collapse:collapse; }
+  .us-table th, .us-table td { padding:9px 12px; border-bottom:1px solid #e1e5ea; text-align:left; font-size:.92rem; }
+  .us-table th { background:#eef2f5; }
+  .us-off { color:#9aa5b1; }
+  .us-err { color:#b91c1c; }
+</style>
+<h2>Users</h2>
+{% for m in messages %}<p class="us-err">{{ m }}</p>{% endfor %}
+<div class="us-bar">
+  <form method="get"><input name="q" value="{{ q }}" placeholder="Search..."> <button type="submit">Search</button></form>
+  <a href="{% url 'users_app:add' %}">+ Add User</a>
+</div>
+<table class="us-table">
+  <tr><th>Username</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th></th></tr>
+  {% for u in object_list %}
+  <tr class="{% if not u.is_active %}us-off{% endif %}">
+    <td>{{ u.username }}</td><td>{{ u.get_full_name }}</td><td>{{ u.email }}</td>
+    <td>{{ u.profile.phone }}</td><td>{{ u.profile.get_role_display }}</td>
+    <td>{% if u.is_active %}Active{% else %}Inactive{% endif %}</td>
+    <td>
+      <a href="{% url 'users_app:edit' u.pk %}">Edit</a> |
+      <form method="post" action="{% url 'users_app:toggle' u.pk %}" style="display:inline">{% csrf_token %}
+        <button type="submit">{% if u.is_active %}Deactivate{% else %}Activate{% endif %}</button>
+      </form>
+    </td>
+  </tr>
+  {% empty %}<tr><td colspan="7">Koi user nahi</td></tr>{% endfor %}
+</table>
+{% if is_paginated %}<p>
+  {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ q }}">&laquo; Prev</a>{% endif %}
+  Page {{ page_obj.number }} / {{ paginator.num_pages }}
+  {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ q }}">Next &raquo;</a>{% endif %}
+</p>{% endif %}
+{% endblock %}

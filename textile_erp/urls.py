@@ -2,6 +2,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.http import HttpResponse
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +25,5 @@ urlpatterns = [
     path('users/', include('users_app.urls')),
     path('settings/', include('company_settings.urls')),
     path('production/', include('production.urls')),
+    path('users/roles/', lambda r: HttpResponse("Roles & Permissions - jald aa raha hai"), name='roles_permissions'),
 ]

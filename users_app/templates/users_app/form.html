@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .us-form { display:grid; grid-template-columns: repeat(2, 1fr); gap:14px 20px; max-width:720px; }
+  .us-form label { display:block; font-size:.85rem; margin-bottom:4px; }
+  .us-form input:not([type=checkbox]), .us-form select { width:100%; padding:8px; box-sizing:border-box; }
+  .us-form .actions { grid-column: 1 / -1; }
+  .us-form .errorlist { color:#b91c1c; margin:0 0 4px; padding:0; list-style:none; font-size:.8rem; }
+  .us-form .helptext { font-size:.75rem; color:#52606d; display:block; }
+  @media (max-width:700px) { .us-form { grid-template-columns: 1fr; } }
+</style>
+<h2>User — {% if object %}Edit {{ object.username }}{% else %}Add{% endif %}</h2>
+<form method="post" class="us-form">
+  {% csrf_token %}
+  {% for f in form %}
+  <div>{{ f.errors }}<label>{{ f.label }}</label>{{ f }}{% if f.help_text %}<span class="helptext">{{ f.help_text }}</span>{% endif %}</div>
+  {% endfor %}
+  <div class="actions"><button type="submit">Save</button> <a href="{% url 'users_app:list' %}">Cancel</a></div>
+</form>
+{% endblock %}

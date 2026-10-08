@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .rl-table { width:100%; border-collapse:collapse; }
+  .rl-table th, .rl-table td { padding:9px 12px; border-bottom:1px solid #e1e5ea; text-align:left; font-size:.92rem; vertical-align:top; }
+  .rl-table th { background:#eef2f5; }
+  .rl-note { color:#52606d; font-size:.85rem; }
+</style>
+<h2>Roles &amp; Permissions</h2>
+<p class="rl-note">Role user ke Profile mein set hota hai (<a href="{% url 'users_app:staff_management' %}">Users</a> se badlo). Neeche ka access abhi sirf reference hai, har module par lagana agla step hai.</p>
+<table class="rl-table">
+  <tr><th>Role</th><th>Users</th><th>Access</th></tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.label }}</td>
+    <td>{{ r.users|length }}{% if r.users %}<br><small>{% for u in r.users %}{{ u.username }}{% if not forloop.last %}, {% endif %}{% endfor %}</small>{% endif %}</td>
+    <td>{{ r.access }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
